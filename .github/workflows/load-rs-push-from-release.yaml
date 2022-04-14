@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  load-rs-dockerhub-master:
+  load-rs-dockerhub-release:
     runs-on: ubuntu-latest
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
