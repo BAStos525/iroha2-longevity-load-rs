@@ -71,7 +71,7 @@ jobs:
           reviewer: soramitsu/devops-team,soramitsu/devops-support
           label: iroha2,longevity
           source_branch: release
-       #   source_branch: "${{ steps.pr_branch.outputs.stdout }}"
+          target_branch: "${{ steps.pr_branch.outputs.stdout }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
 
