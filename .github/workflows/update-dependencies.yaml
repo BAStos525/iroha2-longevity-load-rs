@@ -1,0 +1,112 @@
+name: load-rs::bump-dependencies
+
+on:
+  push:
+    branches: [master]
+
+# Currently these dependencies are updated once per 1-2 months
+#   but there is not an any established day to update them
+# Run workflow At 10:00 UTC on Monday and Friday every week 
+# on:
+#   schedule:
+#     - cron: '0 10 * * 1,5'
+
+# TODO: switch to workflow `dispatch` trigger
+#   in the future when iroha2-dev team will agree with it
+
+env:
+  VERSION_URL: 'https://raw.githubusercontent.com/hyperledger/iroha/iroha2/data_model/Cargo.toml'
+
+jobs:
+  bump-load-rs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get iroha2 version from hyperledger repository
+        uses: mathiasvr/command-output@v1
+        id: new_version
+        with:
+          run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | tr -d '\n'
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: version = "2.0.0-pre-rc.*
+          replace: "${{ steps.new_version.outputs.stdout }}"
+          include: "Cargo.toml"
+          regex: true
+      - name: Push changes
+        uses: devops-infra/action-commit-push@v0.9.0
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          add_timestamp: true
+          commit_message: "bump iroha2 versions in Cargo.toml"
+          target_branch: bump-iroha2-version
+
+      # - name: Get PR branch name
+      #   uses: mathiasvr/command-output@v1
+      #   id: pr_branch
+      #   with:
+      #     run: git symbolic-ref --short HEAD | tr -d '\n'
+
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v4
+      #   with:
+      #     title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+      #     body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+      #     labels: iroha2,longevity
+      #     assignees: ${{ github.actor }}
+      #     team-reviewers: soramitsu/devops-team,soramitsu/devops-support
+      #     reviewers: BAStos525
+      #     base: "${{ steps.pr_branch.outputs.stdout }}"
+      #     branch: dev
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: Create pull request
+        uses: devops-infra/action-pull-request@v0.5.0
+        with:
+          title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+          body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+          assignee: ${{ github.actor }}
+          reviewer: soramitsu/devops-team,soramitsu/devops-support
+          label: iroha2,longevity
+          target_branch: release
+          source_branch: "${{ steps.pr_branch.outputs.stdout }}"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+
+      # - name: Create pull request to master branch
+      #   uses: repo-sync/pull-request@v2.6.2
+      #   with:
+      #     source_branch: "${{ steps.pr_branch.outputs.stdout }}"
+      #     destination_branch: "master"
+      #     pr_assignee: ${{ github.actor }}
+      #     pr_reviewer: "soramitsu/devops-team,soramitsu/devops-support"
+      #     pr_title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+      #     pr_body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+      #     pr_label: "iroha2,longevity"
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Create pull request to dev branch
+      #   uses: repo-sync/pull-request@v2.6.2
+      #   with:
+      #     source_branch: "${{ steps.pr_branch.outputs.stdout }}"
+      #     destination_branch: "dev"
+      #     pr_assignee: ${{ github.actor }}
+      #     pr_reviewer: "soramitsu/devops-team,soramitsu/devops-support"
+      #     pr_title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+      #     pr_body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+      #     pr_label: "iroha2,longevity"
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Create pull request to release branch
+      #   uses: repo-sync/pull-request@v2.6.2
+      #   with:
+      #     source_branch: "${{ steps.pr_branch.outputs.stdout }}"
+      #     destination_branch: "release"
+      #     pr_assignee: ${{ github.actor }}
+      #     pr_reviewer: "soramitsu/devops-team,soramitsu/devops-support"
+      #     pr_title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+      #     pr_body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+      #     pr_label: "iroha2,longevity"
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}          
