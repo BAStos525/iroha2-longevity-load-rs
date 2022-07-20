@@ -70,8 +70,8 @@ jobs:
           assignee: ${{ github.actor }}
           reviewer: soramitsu/devops-team,soramitsu/devops-support
           label: iroha2,longevity
-          source_branch: release
-          target_branch: "${{ steps.pr_branch.outputs.stdout }}"
+          source_branch: "${{ steps.pr_branch.outputs.stdout }}"
+          target_branch: release
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
 
