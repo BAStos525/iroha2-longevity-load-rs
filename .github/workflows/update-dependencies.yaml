@@ -28,27 +28,27 @@ jobs:
         with:
           run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | tr -d '\n'
 
-      # - name: Find and Replace 3th line
-      #   uses: jacobtomlinson/gha-find-replace@v2
-      #   with:
-      #     find: version = "2.0.0-pre-rc.*
-      #     replace: "${{ steps.new_version.outputs.stdout }}"
-      #     include: "Cargo.toml"
-      #     regex: true
-
-      # - name: Find and Replace 10th line
-      #   uses: jacobtomlinson/gha-find-replace@v2
-      #   with:
-      #     find: version = "2.0.0-pre-rc.*
-      #     replace: "${{ steps.new_version.outputs.stdout }} }"
-      #     include: "Cargo.toml"
-      #     regex: true
-
-      - name: Find and Replace
-        uses: flcdrg/replace-multiple-action@v1
+      - name: Find and Replace 3th line
+        uses: jacobtomlinson/gha-find-replace@v2
         with:
-          files: Cargo.toml
-          find: '[{ "find": "", version = "=2.0.0-pre-rc*", "replace": "${{ steps.new_version.outputs.stdout }} }", { "find": ""version = "2.0.0-pre-rc.*", "replace": "${{ steps.new_version.outputs.stdout }}" }]'
+          find: version = "2.0.0-pre-rc.*
+          replace: "${{ steps.new_version.outputs.stdout }}"
+          include: "Cargo.toml"
+          regex: true
+
+      - name: Find and Replace 10th line
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: , version = "2.0.0-pre-rc.*
+          replace: "${{ steps.new_version.outputs.stdout }} }"
+          include: "Cargo.toml"
+          regex: true
+
+      # - name: Find and Replace
+      #   uses: flcdrg/replace-multiple-action@v1
+      #   with:
+      #     files: Cargo.toml
+      #     find: '[{ "find": "", version = "=2.0.0-pre-rc*", "replace": "${{ steps.new_version.outputs.stdout }} }", { "find": ""version = "2.0.0-pre-rc.*", "replace": "${{ steps.new_version.outputs.stdout }}" }]'
 
 
       - name: Push changes
