@@ -60,8 +60,8 @@ jobs:
           assignees: ${{ github.actor }}
           team-reviewers: soramitsu/devops-team,soramitsu/devops-support
           reviewers: BAStos525
-          base: release
-          branch: "${{ steps.pr_branch.outputs.stdout }}"
+          base: "${{ steps.pr_branch.outputs.stdout }}"
+          branch: release
           token: ${{ secrets.GITHUB_TOKEN }}
 
 
