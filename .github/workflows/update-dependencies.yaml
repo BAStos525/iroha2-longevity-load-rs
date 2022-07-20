@@ -35,22 +35,14 @@ jobs:
           include: "Cargo.toml"
           regex: true
 
-      # - name: Push changes
-      #   uses: devops-infra/action-commit-push@v0.9.0
-      #   with:
-      #     github_token: "${{ secrets.GITHUB_TOKEN }}"
-      #     add_timestamp: true
-      #     commit_message: "bump iroha2 versions in Cargo.toml"
-      #     target_branch: bump-iroha2-version
-
-      - name: Push changes 1
-        uses: actions-x/commit@v6
+      - name: Push changes
+        uses: devops-infra/action-commit-push@v0.9.0
         with:
-          name: ${{ github.actor }}
-          branch: bump-iroha2-version
-          files: Cargo.toml
-        #  force: true
-        #  directory: path/to/different/repo      
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          add_timestamp: true
+          commit_message: "bump iroha2 versions in Cargo.toml"
+          target_branch: bump-iroha2-version
+    
 
       - name: Get PR branch name
         uses: mathiasvr/command-output@v1
