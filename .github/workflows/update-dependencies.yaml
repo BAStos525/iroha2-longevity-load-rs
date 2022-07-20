@@ -34,13 +34,23 @@ jobs:
           replace: "${{ steps.new_version.outputs.stdout }}"
           include: "Cargo.toml"
           regex: true
-      - name: Push changes
-        uses: devops-infra/action-commit-push@v0.9.0
+
+      # - name: Push changes
+      #   uses: devops-infra/action-commit-push@v0.9.0
+      #   with:
+      #     github_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     add_timestamp: true
+      #     commit_message: "bump iroha2 versions in Cargo.toml"
+      #     target_branch: bump-iroha2-version
+
+      - name: Push changes 1
+        uses: actions-x/commit@v6
         with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-          add_timestamp: true
-          commit_message: "bump iroha2 versions in Cargo.toml"
-          target_branch: bump-iroha2-version
+          name: ${{ github.actor }}
+          branch: bump-iroha2-version
+          files: Cargo.toml
+        #  force: true
+        #  directory: path/to/different/repo      
 
       - name: Get PR branch name
         uses: mathiasvr/command-output@v1
@@ -48,8 +58,6 @@ jobs:
         with:
           run: git symbolic-ref --short HEAD | tr -d '\n'
 
-      # - name: Run chown
-      #   run: sudo chown -R "${USER:-$(id -un)}" .
 
       - name: pull-request-action
         uses: vsoch/pull-request-action@master
@@ -78,6 +86,9 @@ jobs:
       #     target_branch: release
       #     github_token: ${{ secrets.GITHUB_TOKEN }}
 
+
+      # - name: Run chown
+      #   run: sudo chown -R "${USER:-$(id -un)}" .
 
       # - name: Create pull request to master branch
       #   uses: repo-sync/pull-request@v2.6.2
