@@ -62,7 +62,7 @@ jobs:
           reviewers: BAStos525
           base: "${{ steps.pr_branch.outputs.stdout }}"
           branch: release
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
 
 
       # - name: Create pull request
