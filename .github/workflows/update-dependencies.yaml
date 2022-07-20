@@ -48,7 +48,7 @@ jobs:
         uses: flcdrg/replace-multiple-action@v1
         with:
           files: Cargo.toml
-          find: '[{ "find": , version = "=2.0.0-pre-rc*, "replace": "${{ steps.new_version.outputs.stdout }} }", { "find": version = "2.0.0-pre-rc.*, "replace": "${{ steps.new_version.outputs.stdout }}" }]'
+          find: '[{ "find": "", version = "=2.0.0-pre-rc*", "replace": "${{ steps.new_version.outputs.stdout }} }", { "find": ""version = "2.0.0-pre-rc.*", "replace": "${{ steps.new_version.outputs.stdout }}" }]'
 
 
       - name: Push changes
