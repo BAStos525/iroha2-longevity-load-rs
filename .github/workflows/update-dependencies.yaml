@@ -48,31 +48,34 @@ jobs:
         with:
           run: git symbolic-ref --short HEAD | tr -d '\n'
 
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v4
-      #   with:
-      #     title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
-      #     body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
-      #     labels: iroha2,longevity
-      #     assignees: ${{ github.actor }}
-      #     team-reviewers: soramitsu/devops-team,soramitsu/devops-support
-      #     reviewers: BAStos525
-      #     base: "${{ steps.pr_branch.outputs.stdout }}"
-      #     branch: dev
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run chown
+        run: sudo chown -R "${USER:-$(id -un)}" .
 
-
-      - name: Create pull request
-        uses: devops-infra/action-pull-request@v0.5.0
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
         with:
           title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
           body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
-          assignee: ${{ github.actor }}
-          reviewer: soramitsu/devops-team,soramitsu/devops-support
-          label: iroha2,longevity
-          source_branch: "${{ steps.pr_branch.outputs.stdout }}"
-          target_branch: release
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: iroha2,longevity
+          assignees: ${{ github.actor }}
+          team-reviewers: soramitsu/devops-team,soramitsu/devops-support
+          reviewers: BAStos525
+          base: release
+          branch: "${{ steps.pr_branch.outputs.stdout }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
+      # - name: Create pull request
+      #   uses: devops-infra/action-pull-request@v0.5.0
+      #   with:
+      #     title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+      #     body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+      #     assignee: ${{ github.actor }}
+      #     reviewer: soramitsu/devops-team,soramitsu/devops-support
+      #     label: iroha2,longevity
+      #     source_branch: "${{ steps.pr_branch.outputs.stdout }}"
+      #     target_branch: release
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
 
 
       # - name: Create pull request to master branch
