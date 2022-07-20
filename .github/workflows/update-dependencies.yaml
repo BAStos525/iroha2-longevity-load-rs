@@ -42,11 +42,11 @@ jobs:
           commit_message: "bump iroha2 versions in Cargo.toml"
           target_branch: bump-iroha2-version
 
-      # - name: Get PR branch name
-      #   uses: mathiasvr/command-output@v1
-      #   id: pr_branch
-      #   with:
-      #     run: git symbolic-ref --short HEAD | tr -d '\n'
+      - name: Get PR branch name
+        uses: mathiasvr/command-output@v1
+        id: pr_branch
+        with:
+          run: git symbolic-ref --short HEAD | tr -d '\n'
 
       # - name: Create Pull Request
       #   uses: peter-evans/create-pull-request@v4
