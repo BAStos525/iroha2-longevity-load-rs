@@ -48,21 +48,22 @@ jobs:
         with:
           run: git symbolic-ref --short HEAD | tr -d '\n'
 
-      - name: Run chown
-        run: sudo chown -R "${USER:-$(id -un)}" .
+      # - name: Run chown
+      #   run: sudo chown -R "${USER:-$(id -un)}" .
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
-          body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
-          labels: iroha2,longevity
-          assignees: ${{ github.actor }}
-          team-reviewers: soramitsu/devops-team,soramitsu/devops-support
-          reviewers: BAStos525
-          base: release
-          branch: "${{ steps.pr_branch.outputs.stdout }}"
-          token: ${{ secrets.PAT }}
+      - name: pull-request-action
+        uses: vsoch/pull-request-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_BRANCH: "release"
+          PULL_REQUEST_FROM_BRANCH: "${{ steps.pr_branch.outputs.stdout }}"
+          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+          PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+          PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
+          PULL_REQUEST_REVIEWERS: BAStos525
+        #  PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
+          PULL_REQUEST_UPDATE: true
+
 
 
       # - name: Create pull request
