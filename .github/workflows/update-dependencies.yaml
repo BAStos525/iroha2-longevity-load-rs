@@ -2,10 +2,16 @@ name: load-rs::bump-dependencies
 
 # Currently these dependencies are updated once per 1-2 months
 #   but there is not an any established day to update them
+# Workflow on `schedule` trigger could be run only on master/base branch
 # Run workflow At 10:00 UTC on Monday and Friday every week
+# on:
+#   schedule:
+#     - cron: '0 10 * * 1,5'
+
 on:
-  schedule:
-    - cron: '0 10 * * 1,5'
+ push:
+  branches:
+    - "master"
 
 # TODO: switch to workflow `dispatch` trigger
 #   in the future when iroha2-dev team will agree with it
