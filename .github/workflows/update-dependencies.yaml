@@ -1,15 +1,11 @@
 name: load-rs::bump-dependencies
 
-on:
-  push:
-    branches: [master]
-
 # Currently these dependencies are updated once per 1-2 months
 #   but there is not an any established day to update them
-# Run workflow At 10:00 UTC on Monday and Friday every week 
-# on:
-#   schedule:
-#     - cron: '0 10 * * 1,5'
+# Run workflow At 10:00 UTC on Monday and Friday every week
+on:
+  schedule:
+    - cron: '0 10 * * 1,5'
 
 # TODO: switch to workflow `dispatch` trigger
 #   in the future when iroha2-dev team will agree with it
@@ -27,30 +23,20 @@ jobs:
         id: new_version
         with:
           run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | tr -d '\n'
-
-      - name: Find and Replace 3th line
+      - name: Find and replace 3th line
         uses: jacobtomlinson/gha-find-replace@v2
         with:
-          find: version = "2.0.0-pre-rc.*
+          find: '*2.0.0-pre-rc.*'
           replace: "${{ steps.new_version.outputs.stdout }}"
           include: "Cargo.toml"
           regex: true
-
-      - name: Find and Replace 10th line
+      - name: Find and replace 9-10th lines
         uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: ', version = "2.0.0-pre-rc.*'
           replace: ", ${{ steps.new_version.outputs.stdout }} }"
           include: "Cargo.toml"
           regex: true
-
-      # - name: Find and Replace
-      #   uses: flcdrg/replace-multiple-action@v1
-      #   with:
-      #     files: Cargo.toml
-      #     find: '[{ "find": "", version = "=2.0.0-pre-rc*", "replace": "${{ steps.new_version.outputs.stdout }} }", { "find": ""version = "2.0.0-pre-rc.*", "replace": "${{ steps.new_version.outputs.stdout }}" }]'
-
-
       - name: Push changes
         uses: devops-infra/action-commit-push@v0.9.0
         with:
@@ -58,17 +44,13 @@ jobs:
           add_timestamp: true
           commit_message: "bump iroha2 versions in Cargo.toml"
           target_branch: bump-iroha2-version
-    
-
       - name: Get PR branch name
         uses: mathiasvr/command-output@v1
         id: pr_branch
         with:
           run: git symbolic-ref --short HEAD | tr -d '\n'
-
-
-      - name: pull-request-action to master
-        uses: vsoch/pull-request-action@master
+      - name: Create pull request
+        uses: vsoch/pull-request-action@v1.0.19
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "master"
@@ -79,28 +61,3 @@ jobs:
           PULL_REQUEST_REVIEWERS: BAStos525
           PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
           PULL_REQUEST_UPDATE: true
-
-      - name: pull-request-action to release
-        uses: vsoch/pull-request-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PULL_REQUEST_BRANCH: "release"
-          PULL_REQUEST_FROM_BRANCH: "${{ steps.pr_branch.outputs.stdout }}"
-          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
-          PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
-          PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
-          PULL_REQUEST_REVIEWERS: BAStos525
-          PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
-          PULL_REQUEST_UPDATE: true
-
-      # - name: Create pull request
-      #   uses: devops-infra/action-pull-request@v0.5.0
-      #   with:
-      #     title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
-      #     body: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
-      #     assignee: ${{ github.actor }}
-      #     reviewer: soramitsu/devops-team,soramitsu/devops-support
-      #     label: iroha2,longevity
-      #     source_branch: "${{ steps.pr_branch.outputs.stdout }}"
-      #     target_branch: release
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
