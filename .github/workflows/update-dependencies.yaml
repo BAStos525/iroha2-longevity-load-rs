@@ -40,7 +40,7 @@ jobs:
         uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: ', version = "2.0.0-pre-rc.*'
-          replace: "${{ steps.new_version.outputs.stdout }} }"
+          replace: ", ${{ steps.new_version.outputs.stdout }} }"
           include: "Cargo.toml"
           regex: true
 
