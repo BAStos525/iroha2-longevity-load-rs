@@ -56,7 +56,7 @@ jobs:
         with:
           run: git symbolic-ref --short HEAD | tr -d '\n'
       - name: Create pull request
-        uses: vsoch/pull-request-action@v1.0.19
+        uses: vsoch/pull-request-action@1.0.19
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "master"
