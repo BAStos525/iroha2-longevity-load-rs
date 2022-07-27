@@ -65,32 +65,18 @@ jobs:
       #     key: dependencies.iroha_data_model.version
       #     value: "${{ steps.new_version.outputs.stdout }}"
 
-      - name: Cargo Semver Update
-        id: update
-        uses: lemonxah/cargo_semver_update@v1.0.3
+      - name: Cargo Semver Update and Tag
+        uses: lemonxah/cargo_semver_update_and_tag@v1.0.3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
       
-      - name: Commit file
-        uses: swinton/commit@v2.x
-        env:
-          GH_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+      - name: Push changes
+        uses: devops-infra/action-commit-push@v0.9.0
         with:
-          files: |
-            Cargo.toml
-          commit-message: Updating Cargo semver version to ${{ steps.update.outputs.new_version }} # commit message including the new version
-        
-      - name: Commit tagger
-        uses: tvdias/github-tagger@v0.0.2
-        with:
-          repo-token: ${{ inputs.GITHUB_TOKEN }}
-          tag: ${{ steps.update.outputs.new_version_with_v }} # create new tag with new version that includes the prefix `v`      
-
-      # - name: Push changes
-      #   uses: devops-infra/action-commit-push@v0.9.0
-      #   with:
-      #     github_token: "${{ secrets.GITHUB_TOKEN }}"
-      #     add_timestamp: true
-      #     commit_message: "bump iroha2 versions in Cargo.toml"
-      #     target_branch: bump-iroha2-version
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          add_timestamp: true
+          commit_message: "bump iroha2 versions in Cargo.toml"
+          target_branch: bump-iroha2-version
 
       - name: Get PR branch name
         uses: mathiasvr/command-output@v1
