@@ -35,7 +35,7 @@ jobs:
         with:
           file: "Cargo.toml"
           key: "package.version"
-          value: ${{ '\'steps.new_version.outputs.stdout }}
+          value: '\''${{ steps.new_version.outputs.stdout }}
 
       - name: Edit iroha_client.version key
         uses: ciiiii/toml-editor@1.0.0
