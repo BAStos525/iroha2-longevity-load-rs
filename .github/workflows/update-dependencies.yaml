@@ -28,8 +28,8 @@ jobs:
         uses: mathiasvr/command-output@v1
         id: new_version
         with:
-          run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | sed 's/version = //g'
-          
+          run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | sed 's/version = //g' | tr -d '\n'
+
       - name: Edit package.version key
         uses: ciiiii/toml-editor@1.0.0
         with:
