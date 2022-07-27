@@ -28,7 +28,7 @@ jobs:
         uses: mathiasvr/command-output@v1
         id: new_version
         with:
-          run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' 's/version = //g' | tr -d '\n'
+          run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | sed 's/version = //g' | tr -d '\n'
       # - name: Find and replace 3th line
       #   uses: jacobtomlinson/gha-find-replace@v2
       #   with:
