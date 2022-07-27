@@ -64,11 +64,6 @@ jobs:
           file: "Cargo.toml"
           key: dependencies.iroha_data_model
           value: "${{ steps.new_version.outputs.stdout }}"
-
-      - name: Cargo Semver Update and Tag
-        uses: lemonxah/cargo_semver_update_and_tag@v1.0.3
-        with:
-          GITHUB_TOKEN: ${{ github.token }}
       
       - name: Push changes
         uses: devops-infra/action-commit-push@v0.9.0
