@@ -28,65 +28,51 @@ jobs:
         uses: mathiasvr/command-output@v1
         id: new_version
         with:
-          run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | sed 's/version = //g' | tr -d '\n'
-      # - name: Find and replace 3th line
-      #   uses: jacobtomlinson/gha-find-replace@v2
-      #   with:
-      #     find: version = ".*-pre-rc.*"
-      #     replace: "${{ steps.new_version.outputs.stdout }}"
-      #     include: "Cargo.toml"
-      #     regex: true
-      # - name: Find and replace 9-10th lines
-      #   uses: jacobtomlinson/gha-find-replace@v2
-      #   with:
-      #     find: version = ".*-pre-rc.*" }
-      #     replace: "${{ steps.new_version.outputs.stdout }} }"
-      #     include: "Cargo.toml"
-      #     regex: true
+          run: curl -s ${{ env.VERSION_URL }} | sed -ne '3p' | sed 's/version = //g'
+          
+      - name: Edit package.version key
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "Cargo.toml"
+          key: "package.version"
+          value: "${{ steps.new_version.outputs.stdout }}"
 
-      # - name: Edit Toml
-      #   uses: ciiiii/toml-editor@1.0.0
-      #   with:
-      #     file: "Cargo.toml"
-      #     key: "package.version"
-      #     value: "${{ steps.new_version.outputs.stdout }}"
-
-      # - name: Edit Toml 2
-      #   uses: ciiiii/toml-editor@1.0.0
-      #   with:
-      #     file: "Cargo.toml"
-      #     key: "dependencies.iroha_client.version"
-      #     value: "${{ steps.new_version.outputs.stdout }}"
+      - name: Edit iroha_client.version key
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "Cargo.toml"
+          key: "dependencies.iroha_client.version"
+          value: "${{ steps.new_version.outputs.stdout }}"
       
-      # - name: Edit Toml 3
-      #   uses: ciiiii/toml-editor@1.0.0
-      #   with:
-      #     file: "Cargo.toml"
-      #     key: "dependencies.iroha_data_model.version"
-      #     value: "${{ steps.new_version.outputs.stdout }}"
+      - name: Edit iroha_data_model key
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "Cargo.toml"
+          key: "dependencies.iroha_data_model.version"
+          value: "${{ steps.new_version.outputs.stdout }}"
       
-      # - name: Push changes
-      #   uses: devops-infra/action-commit-push@v0.9.0
-      #   with:
-      #     github_token: "${{ secrets.GITHUB_TOKEN }}"
-      #     add_timestamp: true
-      #     commit_message: "bump iroha2 versions in Cargo.toml"
-      #     target_branch: bump-iroha2-version
+      - name: Push changes
+        uses: devops-infra/action-commit-push@v0.9.0
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          add_timestamp: true
+          commit_message: "bump iroha2 versions in Cargo.toml"
+          target_branch: bump-iroha2-version
 
-      # - name: Get PR branch name
-      #   uses: mathiasvr/command-output@v1
-      #   id: pr_branch
-      #   with:
-      #     run: git symbolic-ref --short HEAD | tr -d '\n'
-      # - name: Create pull request
-      #   uses: vsoch/pull-request-action@1.0.19
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     PULL_REQUEST_BRANCH: "master"
-      #     PULL_REQUEST_FROM_BRANCH: "${{ steps.pr_branch.outputs.stdout }}"
-      #     PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
-      #     PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
-      #     PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
-      #     PULL_REQUEST_REVIEWERS: BAStos525
-      #     PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
-      #     PULL_REQUEST_UPDATE: true
+      - name: Get PR branch name
+        uses: mathiasvr/command-output@v1
+        id: pr_branch
+        with:
+          run: git symbolic-ref --short HEAD | tr -d '\n'
+      - name: Create pull request
+        uses: vsoch/pull-request-action@1.0.19
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_BRANCH: "master"
+          PULL_REQUEST_FROM_BRANCH: "${{ steps.pr_branch.outputs.stdout }}"
+          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+          PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update `iroha client` and `iroha_data_model` dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+          PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
+          PULL_REQUEST_REVIEWERS: BAStos525
+          PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
+          PULL_REQUEST_UPDATE: true
