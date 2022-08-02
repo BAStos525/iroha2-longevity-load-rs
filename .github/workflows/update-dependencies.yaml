@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pr_title: ${{ steps.new_version.outputs.stdout }}
-      pr_link: ${{ steps.pr_branch.outputs.stdout }}
+      # pr_link: ${{ steps.pr_branch.outputs.stdout }}
     steps:
       - uses: actions/checkout@v3
       - name: Get iroha2 version from hyperledger repository
@@ -61,18 +61,19 @@ jobs:
           github_token: "${{ secrets.GITHUB_TOKEN }}"
           add_timestamp: true
           commit_message: "bump iroha2 versions in Cargo.toml"
-          target_branch: bump-iroha2-version
-      - name: Get PR branch name
-        uses: mathiasvr/command-output@v1
-        id: pr_branch
-        with:
-          run: git symbolic-ref --short HEAD | tr -d '\n'      
-      - name: Merge PR branch into iroha2-dev branch
-        uses: mtanzi/action-automerge@v1
-        with:
-          github_token: ${{ github.token }}
-          source: ${{ steps.pr_branch.outputs.stdout }}
-          target: 'iroha2-dev'
+        #  target_branch: bump-iroha2-version
+          target_branch: iroha2-dev
+      # - name: Get PR branch name
+      #   uses: mathiasvr/command-output@v1
+      #   id: pr_branch
+      #   with:
+      #     run: git symbolic-ref --short HEAD | tr -d '\n'      
+      # - name: Merge PR branch into iroha2-dev branch
+      #   uses: mtanzi/action-automerge@v1
+      #   with:
+      #     github_token: ${{ github.token }}
+      #     source: ${{ steps.pr_branch.outputs.stdout }}
+      #     target: 'iroha2-dev'
 
   bump-load-rs-master:
     needs: [merge-load-rs-iroha2-dev]
