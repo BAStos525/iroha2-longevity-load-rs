@@ -21,6 +21,9 @@ env:
 jobs:
   merge-load-rs-iroha2-dev:
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.new_version.outputs.stdout }}
+      output2: ${{ steps.pr_branch.outputs.stdout }}
     steps:
       - uses: actions/checkout@v3
       - name: Get iroha2 version from hyperledger repository
@@ -116,12 +119,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "master"
-          PULL_REQUEST_FROM_BRANCH: "${{ steps.pr_branch.outputs.stdout }}"
+          PULL_REQUEST_FROM_BRANCH: "${{ needs.merge-load-rs-iroha2-dev.outputs.output2.stdout }}"
      #     PULL_REQUEST_FROM_BRANCH: "iroha2-dev"
-          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ needs.merge-load-rs-iroha2-dev.outputs.output1.stdout }}"
           PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
           PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
           PULL_REQUEST_REVIEWERS: BAStos525
           PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
           PULL_REQUEST_UPDATE: true
-#
