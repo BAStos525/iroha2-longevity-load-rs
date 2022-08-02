@@ -10,8 +10,8 @@ on:
   # workflow_dispatch:
   push:
     branches:
-      - testing-branch
-
+      - iroha2-dev
+      
 # TODO: try to switch to workflow `dispatch` trigger and move workflows to dev and release branches
 #       in the future when iroha2-dev team will agree with it
 
