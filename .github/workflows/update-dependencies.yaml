@@ -29,7 +29,7 @@ jobs:
             cargo:
               - 'Cargo.toml'
             actions:
-              - `.github/**`
+              - `.github/workflows/**`
       - name: Create pull request
         if: steps.filter.outputs.cargo == 'false' || steps.filter.outputs.actions == 'false'
         uses: vsoch/pull-request-action@1.0.19
