@@ -1,2 +1,5 @@
 target
 Cargo.lock
+.github/**/*
+.github/workflows/update-dependencies.yaml
+.github/workflows/load-rs-push-from-dev.yaml
