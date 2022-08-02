@@ -1,32 +1,129 @@
-[package]
-name = "iroha2-longevity-load-rs"
-version = "2.0.0-pre-rc.6"
-edition = "2021"
+name: load-rs::bump-dependencies
 
-[dependencies]
-rouille = "3.5.0"
-serde_json = "1.0.73"
-serde = "1.0.132"
-structopt = "0.3.25"
-color-eyre = "0.6.1"
-tracing = "0.1.35"
-tracing-subscriber = "0.3.14"
+# Currently these dependencies are updated once per 1-2 months
+#   but there is not an any established day to update them
+# Workflow on `schedule` trigger could be run only on master/base branch
+# Run workflow At 10:00 UTC on Monday and Friday every week
+on:
+  # schedule:
+  #   - cron: '0 10 * * 1,5'
+  # workflow_dispatch:
+  push:
+    branches:
+      - iroha2-dev
 
-  [dependencies.iroha_client]
-  git = "https://github.com/hyperledger/iroha.git"
-  branch = "iroha2-dev"
-  version = "2.0.0-pre-rc.6"
+# TODO: try to switch to workflow `dispatch` trigger and move workflows to dev and release branches
+#       in the future when iroha2-dev team will agree with it
 
-  [dependencies.iroha_data_model]
-  git = "https://github.com/hyperledger/iroha.git"
-  branch = "iroha2-dev"
-  version = "2.0.0-pre-rc.6"
+env:
+  VERSION_URL: 'https://raw.githubusercontent.com/hyperledger/iroha/iroha2/data_model/Cargo.toml'
 
-  [dependencies.iroha_config]
-  git = "https://github.com/hyperledger/iroha.git"
-  branch = "iroha2-dev"
-  version = "2.0.0-pre-rc.6"
+jobs:
+  merge-load-rs-iroha2-dev:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_title: ${{ steps.new_version.outputs.stdout }}
+      pr_link: ${{ steps.pr_branch.outputs.stdout }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get iroha2 version from hyperledger repository
+        uses: mathiasvr/command-output@v1
+        id: new_version
+        with:
+          run: curl -s ${{ env.VERSION_URL }} | sed -n '3p' | sed -e 's/version = "//g' -e 's/"$//' | tr -d '\n'
+      - name: Edit package.version key
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "Cargo.toml"
+          key: "package.version"
+          value: ${{ steps.new_version.outputs.stdout }}
+      - name: Edit iroha_client.version key
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "Cargo.toml"
+          key: "dependencies.iroha_client.version"
+          value: ${{ steps.new_version.outputs.stdout }} 
+      - name: Edit iroha_data_model key
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "Cargo.toml"
+          key: "dependencies.iroha_data_model.version"
+          value: ${{ steps.new_version.outputs.stdout }}
+      - name: Edit iroha_config key
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "Cargo.toml"
+          key: "dependencies.iroha_config.version"
+          value: ${{ steps.new_version.outputs.stdout }}          
+      - name: Push changes
+        uses: devops-infra/action-commit-push@v0.9.0
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          add_timestamp: true
+          commit_message: "bump iroha2 versions in Cargo.toml"
+          target_branch: bump-iroha2-version
+      - name: Get PR branch name
+        uses: mathiasvr/command-output@v1
+        id: pr_branch
+        with:
+          run: git symbolic-ref --short HEAD | tr -d '\n'      
+      - name: Merge PR branch into iroha2-dev branch
+        uses: mtanzi/action-automerge@v1
+        with:
+          github_token: ${{ github.token }}
+          source: ${{ steps.pr_branch.outputs.stdout }}
+          target: 'iroha2-dev'
 
-  [dependencies.chrono]
-  version = "0.4"
-  features = [ "serde" ]
+  bump-load-rs-master:
+    needs: [merge-load-rs-iroha2-dev]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # - name: Get iroha2 version from hyperledger repository
+      #   uses: mathiasvr/command-output@v1
+      #   id: new_version
+      #   with:
+      #     run: curl -s ${{ env.VERSION_URL }} | sed -n '3p' | sed -e 's/version = "//g' -e 's/"$//' | tr -d '\n'
+      # - name: Edit package.version key
+      #   uses: ciiiii/toml-editor@1.0.0
+      #   with:
+      #     file: "Cargo.toml"
+      #     key: "package.version"
+      #     value: ${{ steps.new_version.outputs.stdout }}
+      # - name: Edit iroha_client.version key
+      #   uses: ciiiii/toml-editor@1.0.0
+      #   with:
+      #     file: "Cargo.toml"
+      #     key: "dependencies.iroha_client.version"
+      #     value: ${{ steps.new_version.outputs.stdout }} 
+      # - name: Edit iroha_data_model key
+      #   uses: ciiiii/toml-editor@1.0.0
+      #   with:
+      #     file: "Cargo.toml"
+      #     key: "dependencies.iroha_data_model.version"
+      #     value: ${{ steps.new_version.outputs.stdout }}
+      # - name: Push changes
+      #   uses: devops-infra/action-commit-push@v0.9.0
+      #   with:
+      #     github_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     add_timestamp: true
+      #     commit_message: "bump iroha2 versions in Cargo.toml"
+      #     target_branch: bump-iroha2-version
+      # - name: Get PR branch name
+      #   uses: mathiasvr/command-output@v1
+      #   id: pr_branch
+      #   with:
+      #     run: git symbolic-ref --short HEAD | tr -d '\n'
+      - name: Create pull request
+        uses: vsoch/pull-request-action@1.0.19
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_BRANCH: "master"
+          PULL_REQUEST_FROM_BRANCH: "${{ needs.merge-load-rs-iroha2-dev.outputs.pr_link }}"
+     #     PULL_REQUEST_FROM_BRANCH: "iroha2-dev"
+          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ needs.merge-load-rs-iroha2-dev.outputs.pr_title }}"
+          PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+          PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
+          PULL_REQUEST_REVIEWERS: BAStos525
+          PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
+          PULL_REQUEST_UPDATE: true
