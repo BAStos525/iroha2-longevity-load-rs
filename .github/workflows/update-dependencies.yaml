@@ -116,8 +116,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "master"
-      #    PULL_REQUEST_FROM_BRANCH: "${{ steps.pr_branch.outputs.stdout }}"
-          PULL_REQUEST_FROM_BRANCH: "iroha2-dev"
+          PULL_REQUEST_FROM_BRANCH: "${{ steps.pr_branch.outputs.stdout }}"
+     #     PULL_REQUEST_FROM_BRANCH: "iroha2-dev"
           PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
           PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
           PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
