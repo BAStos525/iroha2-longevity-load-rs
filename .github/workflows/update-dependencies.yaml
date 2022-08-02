@@ -7,7 +7,10 @@ name: load-rs::bump-dependencies
 on:
   # schedule:
   #   - cron: '0 10 * * 1,5'
-  workflow_dispatch:
+  # workflow_dispatch:
+  push:
+    branches:
+      - testing-branch
 
 # TODO: try to switch to workflow `dispatch` trigger and move workflows to dev and release branches
 #       in the future when iroha2-dev team will agree with it
