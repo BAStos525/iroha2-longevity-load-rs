@@ -26,10 +26,12 @@ jobs:
         id: filter
         with:
           filters: |
-            cancel_pr:
+            cargo:
               - 'Cargo.toml'
+            actions:
+              - `./github/**`
       - name: Create pull request
-        if: steps.filter.outputs.cancel_pr == 'false'
+        if: steps.filter.outputs.cargo == 'false' || steps.filter.outputs.actions == 'false'
         uses: vsoch/pull-request-action@1.0.19
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
