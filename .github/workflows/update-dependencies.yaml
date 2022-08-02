@@ -59,10 +59,9 @@ jobs:
         uses: devops-infra/action-commit-push@v0.9.0
         with:
           github_token: "${{ secrets.GITHUB_TOKEN }}"
-          add_timestamp: true
+     #     add_timestamp: true
           commit_message: "bump iroha2 versions in Cargo.toml"
-        #  target_branch: bump-iroha2-version
-          target_branch: iroha2-dev
+
       # - name: Get PR branch name
       #   uses: mathiasvr/command-output@v1
       #   id: pr_branch
