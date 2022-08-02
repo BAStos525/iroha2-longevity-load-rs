@@ -61,7 +61,7 @@ jobs:
 
       - name: Merge PR branch into iroha2-dev branch
         uses: mtanzi/action-automerge@v1
-    #    id: merge!
+    #    id: merge!!!
         with:
           github_token: ${{ github.token }}
           source: ${{ steps.pr_branch.outputs.stdout }}
