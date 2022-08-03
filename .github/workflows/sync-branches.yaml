@@ -21,10 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - name: Filter files to be merged
         uses: dorny/paths-filter@v2.10.2
         id: filter
         with:
+          base: iroha2-dev
           filters: |
             cargo:
               - 'Cargo.toml'
