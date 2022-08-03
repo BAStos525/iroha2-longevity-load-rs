@@ -1,0 +1,43 @@
+name: load-rs::sync branches
+
+# Currently these dependencies are updated once per 1-2 months
+#   but there is not an any established day to update them
+# Workflow on `schedule` trigger could be run only on master/base branch
+# Run workflow At 10:00 UTC on Monday and Friday every week
+# on:
+#   schedule:
+#     - cron: '0 10 * * 1,5'
+
+on:
+ push:
+  branches: [master]
+
+# TODO: switch to workflow `dispatch` trigger
+#   in the future when iroha2-dev team will agree with it
+
+
+jobs:
+  merge_master_to_iroha2-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Filter files to be merged
+        uses: dorny/paths-filter@v2.10.2
+        id: filter
+        with:
+          filters: |
+            cargo:
+              - 'Cargo.toml'
+      - name: Create pull request
+        if: steps.filter.outputs.cargo == 'false'
+        uses: vsoch/pull-request-action@1.0.19
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_BRANCH: "iroha2-dev"
+          PULL_REQUEST_FROM_BRANCH: "master"
+          PULL_REQUEST_TITLE: "Merge master into iroha2-dev"
+          PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Synchronize a changes from master to iroha2-dev branches</p>"
+          PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
+          PULL_REQUEST_REVIEWERS: BAStos525
+          PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
+          PULL_REQUEST_UPDATE: true
