@@ -53,24 +53,24 @@ jobs:
           commit_prefix: "[AUTO]"
           commit_message: "bump iroha2 versions in Cargo.toml"
 
-      # - name: Create pull request
-      #   uses: devops-infra/action-pull-request@0.5.0
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     body: "**Automated pull request**<br><br>Replaced foo/bar"
-      #     title: ${{ github.event.commits[0].message }}
-      #     assignee:
-
-
       - name: Create pull request
-        uses: vsoch/pull-request-action@1.0.21
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PULL_REQUEST_BRANCH: "fix/DOPS-2024/modify-stable-sync"
-          PULL_REQUEST_FROM_BRANCH: "${{ github.head_ref }}"
-          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
-          PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
-          PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
-          PULL_REQUEST_REVIEWERS: BAStos525 appetrosyan
-          PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
-          PULL_REQUEST_UPDATE: true
+        uses: devops-infra/action-pull-request@0.5.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          body: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+          title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+          assignee: BAStos525,appetrosyan
+
+
+      # - name: Create pull request
+      #   uses: vsoch/pull-request-action@1.0.21
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     PULL_REQUEST_BRANCH: "fix/DOPS-2024/modify-stable-sync"
+      #     PULL_REQUEST_FROM_BRANCH: "${{ github.head_ref }}"
+      #     PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
+      #     PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
+      #     PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
+      #     PULL_REQUEST_REVIEWERS: BAStos525 appetrosyan
+      #     PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
+      #     PULL_REQUEST_UPDATE: true
