@@ -7,10 +7,8 @@ env:
   VERSION_URL: 'https://raw.githubusercontent.com/hyperledger/iroha/iroha2-stable/data_model/Cargo.toml'
 
 jobs:
-  merge-load-rs-iroha2-dev:
+  bump-load-rs-iroha2-stable:
     runs-on: ubuntu-latest
-    outputs:
-      pr_title: ${{ steps.new_version.outputs.stdout }}
     steps:
       - uses: actions/checkout@v3
       - name: Get iroha2 version from hyperledger repository
@@ -42,30 +40,20 @@ jobs:
           file: "Cargo.toml"
           key: "dependencies.iroha_config.version"
           value: ${{ steps.new_version.outputs.stdout }}          
-      - name: Push changes
-        uses: devops-infra/action-commit-push@v0.9.0
-        with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-          commit_message: "bump iroha2 versions in Cargo.toml"
-      - name: Synchronize with hyperledger/iroha2:dev repo
-        run: |
-          echo "response about the workflow end"
-          sleep 10s
-
-  bump-load-rs-iroha2-stable:
-    needs: [merge-load-rs-iroha2-dev]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+          
       - name: Create pull request
-        uses: vsoch/pull-request-action@1.0.19
+        uses: vsoch/pull-request-action@1.0.21
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "iroha2-stable"
-          PULL_REQUEST_FROM_BRANCH: "iroha2-dev"
-          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ needs.merge-load-rs-iroha2-dev.outputs.pr_title }}"
+     #     PULL_REQUEST_FROM_BRANCH: "iroha2-dev"
+          PULL_REQUEST_TITLE: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
           PULL_REQUEST_BODY: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
           PULL_REQUEST_ASSIGNEES: ${{ github.actor }}
           PULL_REQUEST_REVIEWERS: BAStos525 appetrosyan
           PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
           PULL_REQUEST_UPDATE: true
+      - name: Synchronize with iroha2-longevity-load-rs/iroha2:dev branch
+        run: |
+          echo "response about the workflow end"
+          sleep 10s
