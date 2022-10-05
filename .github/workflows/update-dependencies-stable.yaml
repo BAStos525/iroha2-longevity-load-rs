@@ -54,12 +54,14 @@ jobs:
           commit_message: "bump iroha2 versions in Cargo.toml"
 
       - name: Create pull request
-        uses: devops-infra/action-pull-request@0.5.0
+        uses: devops-infra/action-pull-request@v0.5.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           body: "**Automated pull request**<br><br><p>Update iroha2 dependencies from <a href=${{ env.VERSION_URL }}>Hyperledger repository</a></p>"
           title: "Update iroha2 dependencies to ${{ steps.new_version.outputs.stdout }}"
           assignee: BAStos525,appetrosyan
+          target_branch: "fix/DOPS-2024/modify-stable-sync"
+          label: CI,iroha2-load-rs,ver_update
 
 
       # - name: Create pull request
