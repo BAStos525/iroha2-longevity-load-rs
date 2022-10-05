@@ -1,7 +1,10 @@
 name: load-rs::stable::bump-dependencies
 
 on:
-   workflow_dispatch:
+   workflow_run:
+    workflows: [load-rs::dev::bump-dependencies]
+    types: [requested]
+    branches: [fix/DOPS-2024/modify-dev-sync]
 
 env:
   VERSION_URL: 'https://raw.githubusercontent.com/hyperledger/iroha/iroha2-stable/data_model/Cargo.toml'
@@ -53,7 +56,7 @@ jobs:
           PULL_REQUEST_REVIEWERS: BAStos525 appetrosyan
           PULL_REQUEST_TEAM_REVIEWERS: soramitsu/devops-team soramitsu/devops-support
           PULL_REQUEST_UPDATE: true
-      - name: Synchronize with iroha2-longevity-load-rs/iroha2:dev branch
-        run: |
-          echo "response about the workflow end"
-          sleep 10s
+      # - name: Synchronize with iroha2-longevity-load-rs/iroha2:dev branch
+      #   run: |
+      #     echo "response about the workflow end"
+      #     sleep 10s
