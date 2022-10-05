@@ -4,7 +4,7 @@ on:
    workflow_run:
     workflows: [load-rs::dev::bump-dependencies]
     types: [completed]
-    branches: [fix/DOPS-2024/modify-dev-sync]
+    branches: [fix/DOPS-2024/modify-stable-sync]
 
 env:
   VERSION_URL: 'https://raw.githubusercontent.com/hyperledger/iroha/iroha2-stable/data_model/Cargo.toml'
