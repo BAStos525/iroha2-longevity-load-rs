@@ -46,7 +46,7 @@ jobs:
           value: ${{ steps.new_version.outputs.stdout }}          
           
       - name: Commit and push changes
-        uses: devops-infra/action-commit-push@0.9.0
+        uses: devops-infra/action-commit-push@v0.9.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           add_timestamp: true
@@ -63,7 +63,7 @@ jobs:
 
 
       - name: Create pull request
-        uses: vsoch/pull-request-action@1.0.21
+        uses: vsoch/pull-request-action@v1.0.21
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "fix/DOPS-2024/modify-stable-sync"
