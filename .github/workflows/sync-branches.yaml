@@ -19,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
+        # with:
+        #   fetch-depth: 1
       - name: Filter files to be merged
         uses: dorny/paths-filter@v2.10.2
         id: filter
         with:
-          base: iroha2-stable
+          # base: iroha2-stable
           filters: |
             cargo:
               - 'Cargo.toml'
@@ -45,3 +45,8 @@ jobs:
         with:
           source_branch: "iroha2-dev"
           destination_branch: "iroha2-stable"
+          pr_title: "Merge iroha2-dev into iroha2-stable"
+          pr_body: "**Automated pull request**<br><br><p>Synchronize a changes from iroha2-dev to iroha2-stable branches</p>"
+          pr_reviewer: "BAStos525,appetrosyan"
+          pr_assignee: ${{ github.actor }}
+          pr_label: "iroha2,load-rs,auto-pr"
