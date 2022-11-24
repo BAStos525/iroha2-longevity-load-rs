@@ -8,7 +8,7 @@ name: load-rs::sync dev-stable branches
 on:
  pull_request:
   branches: [iroha2-dev]
-  types: [opened, reopened, closed]
+  types: [closed]
 
 permissions:
   contents: read
@@ -31,7 +31,7 @@ jobs:
               - 'Cargo.toml'
       - name: Create pull request
         if: steps.filter.outputs.cargo == 'false'
-        uses: vsoch/pull-request-action@1.0.19
+        uses: vsoch/pull-request-action@1.0.23
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "iroha2-stable"
