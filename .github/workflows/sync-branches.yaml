@@ -51,3 +51,4 @@ jobs:
           reviewer: BAStos525
           assignee: ${{ github.actor }}
           label: iroha2,load-rs
+          get_diff: true
